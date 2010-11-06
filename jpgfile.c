@@ -205,16 +205,17 @@ int ReadJpegSections (FILE * infile, ReadMode_t ReadMode)
                     size = ep-cp;
                     Data = (uchar *)malloc(size);
                     if (Data == NULL){
-		            // ErrFatal("could not allocate data for entire image");
-		            LOGE("could not allocate data for entire image");
-    		        return FALSE;
+				// ErrFatal("could not allocate data for entire image");
+				LOGE("could not allocate data for entire image");
+				return FALSE;
                     }
 
                     got = fread(Data, 1, size, infile);
                     if (got != size){
-			        // ErrFatal("could not read the rest of the image");
-			        LOGE("could not read the rest of the image");
-				    return FALSE;
+				free(Data);
+				// ErrFatal("could not read the rest of the image");
+				LOGE("could not read the rest of the image");
+				return FALSE;
                     }
 
                     CheckSectionsAllocated();
@@ -434,6 +435,7 @@ int ReplaceThumbnail(const char * ThumbFileName)
         fseek(ThumbnailFile, 0, SEEK_SET);
 
         if (ThumbLen + ImageInfo.ThumbnailOffset > 0x10000-20){
+		fclose(ThumbnailFile);
 	        //ErrFatal("Thumbnail is too large to insert into exif header");
 	        LOGE("Thumbnail is too large to insert into exif header");
 	        return FALSE;
